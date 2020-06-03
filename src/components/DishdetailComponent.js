@@ -13,8 +13,8 @@ import { Link } from "react-router-dom";
 function DishDetail(props)  {
 
  const  RenderDish = ({ name, image, description }) => {
-   console.log(name,image)
-   console.log("here")
+  /*  console.log(name,image)
+   console.log("here") */
     return (
       <Card>
         <CardImg top src={image} alt={name} />
