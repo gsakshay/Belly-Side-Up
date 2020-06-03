@@ -12,15 +12,14 @@ import { Link } from "react-router-dom";
 
 function DishDetail(props)  {
 
- const  RenderDish = ({ name, image, description }) => {
-  /*  console.log(name,image)
-   console.log("here") */
+ const  RenderDish = ({dish}) => {
+   console.log(props);
     return (
       <Card>
-        <CardImg top src={image} alt={name} />
+        <CardImg top src={dish.image} alt={dish.name} />
         <CardBody>
-          <CardTitle>{name}</CardTitle>
-          <CardText>{description}</CardText>
+          <CardTitle>{dish.name}</CardTitle>
+          <CardText>{dish.description}</CardText>
         </CardBody>
       </Card>
     );
@@ -50,7 +49,7 @@ function DishDetail(props)  {
       return <div></div>;
     }
 
-    const { dish } = props;
+    const { dish,comments } = props;
 
      return (
        <div className="container">
@@ -59,19 +58,19 @@ function DishDetail(props)  {
              <BreadcrumbItem>
                <Link to="/menu">Menu</Link>
              </BreadcrumbItem>
-             <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
+             <BreadcrumbItem active>{dish.name}</BreadcrumbItem>
            </Breadcrumb>
            <div className="col-12">
-             <h3>{props.dish.name}</h3>
+             <h3>{dish.name}</h3>
              <hr />
            </div>
          </div>
          <div className="row">
            <div className="col-12 col-md-5 m-1">
-             <RenderDish dish={props.dish} />
+             <RenderDish dish={dish} />
            </div>
            <div className="col-12 col-md-5 m-1">
-             <RenderComments comments={props.comments} />
+             <RenderComments comments={comments} />
            </div>
          </div>
        </div>
