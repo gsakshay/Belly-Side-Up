@@ -3,10 +3,20 @@ import "./App.css";
 import Main from './components/MainComponent';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from "react-redux";
-import { createStore } from "redux";
-import Reducer from "./redux/Reducer";
+import { createStore, combineReducers } from "redux";
+import { Dishes } from "./redux/Dishes";
+import { Comments } from "./redux/Comments";
+import { Promotions } from "./redux/Promotions";
+import { Leaders } from "./redux/Leaders";
 
-const store = createStore(Reducer);
+const store = createStore(
+  combineReducers({
+    dishes: Dishes,
+    comments: Comments,
+    promotions: Promotions,
+    leaders: Leaders,
+  })
+);
 class App extends Component {
 
   render() {
