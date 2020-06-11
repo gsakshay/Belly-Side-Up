@@ -58,7 +58,7 @@ class CommentForm extends Component {
   handleSubmit = values => {
     this.toggleModal();
     console.log("Current State is: " + JSON.stringify(values));
-    this.props.addComment(
+    this.props.postComment(
       this.props.dishId,
       values.rating,
       values.author,
@@ -153,7 +153,7 @@ class CommentForm extends Component {
 }
 
 
-  const RenderComments = ({ comments, addComment, dishId }) => {
+  const RenderComments = ({ comments, postComment, dishId }) => {
     if (!comments) {
       return <div></div>;
     }
@@ -168,7 +168,7 @@ class CommentForm extends Component {
             </div>
           </div>
         ))}
-        <CommentForm dishId={dishId} addComment={addComment} />
+        <CommentForm dishId={dishId} postComment={postComment} />
       </div>
     );
   };
@@ -213,7 +213,7 @@ class CommentForm extends Component {
           <div className="col-12 col-md-5 m-1">
             <RenderComments
               comments={props.comments}
-              addComment={props.addComment}
+              postComment={props.postComment}
               dishId={props.dish.id}
             />
           </div>
