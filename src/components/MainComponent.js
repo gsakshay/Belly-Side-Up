@@ -4,11 +4,12 @@ import DishDetail from './DishdetailComponent';
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import Home from "./HomeComponent";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import Contact from "./ContactComponent";
 import About from "./AboutComponent";
+import Favorites from "./FavoriteComponent";
 import { connect } from "react-redux";
-import { postComment, fetchDishes, fetchComments, fetchPromos, fetchLeaders, postFeedback } from '../redux/ActionCreators';
+import { postComment, fetchDishes, fetchComments, fetchPromos, fetchLeaders, postFeedback, loginUser, logoutUser, fetchFavorites, postFavorite, deleteFavorite } from '../redux/ActionCreators';
 import { actions } from "react-redux-form";
 class Main extends Component {
   onDishSelect(dishId) {
@@ -20,6 +21,8 @@ class Main extends Component {
     this.props.fetchComments();
     this.props.fetchPromos();
     this.props.fetchLeaders();
+    this.props.fetchFavorites();
+    console.log("fav",this.props.favorites);
   }
   render() {
     const HomePage = () => {
@@ -46,26 +49,71 @@ class Main extends Component {
     };
 
     const DishWithId = ({ match }) => {
-      return (
+      console.log("This is authentication: ", this.props.auth.isAuthenticated);
+      return this.props.auth.isAuthenticated ? (
         <DishDetail
           dish={
             this.props.dishes.dishes.filter(
-              (dish) => dish.id === parseInt(match.params.dishId, 10)
+              (dish) => dish._id === match.params.dishId
             )[0]
           }
           isLoading={this.props.dishes.isLoading}
           errMess={this.props.dishes.errMess}
           comments={this.props.comments.comments.filter(
-            (comment) => comment.dishId === parseInt(match.params.dishId, 10)
+            (comment) => comment.dish === match.params.dishId
           )}
           commentsErrMess={this.props.comments.errMess}
           postComment={this.props.postComment}
+          favorite={this.props.favorites.favorites.dishes.some(
+            (dish) => dish._id === match.params.dishId
+          )}
+          postFavorite={this.props.postFavorite}
+        />
+      ) : (
+        <DishDetail
+          dish={
+            this.props.dishes.dishes.filter(
+              (dish) => dish._id === match.params.dishId
+            )[0]
+          }
+          isLoading={this.props.dishes.isLoading}
+          errMess={this.props.dishes.errMess}
+          comments={this.props.comments.comments.filter(
+            (comment) => comment.dish === match.params.dishId
+          )}
+          commentsErrMess={this.props.comments.errMess}
+          postComment={this.props.postComment}
+          favorite={false}
+          postFavorite={this.props.postFavorite}
         />
       );
     };
+
+    const PrivateRoute = ({ component: Component, ...rest }) => (
+      <Route
+        {...rest}
+        render={(props) =>
+          this.props.auth.isAuthenticated ? (
+            <Component {...props} />
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/home",
+                state: { from: props.location },
+              }}
+            />
+          )
+        }
+      />
+    );
+
     return (
       <div>
-        <Header />
+        <Header
+          auth={this.props.auth}
+          loginUser={this.props.loginUser}
+          logoutUser={this.props.logoutUser}
+        />
         <Switch>
           <Route path="/home" component={HomePage} />
           <Route
@@ -77,10 +125,23 @@ class Main extends Component {
             exact
             path="/contactus"
             component={() => (
-              <Contact resetFeedbackForm={this.props.resetFeedbackForm} postFeedback={this.props.postFeedback}/>
+              <Contact
+                resetFeedbackForm={this.props.resetFeedbackForm}
+                postFeedback={this.props.postFeedback}
+              />
             )}
           />
           <Route path="/menu/:dishId" component={DishWithId} />
+          <PrivateRoute
+            exact
+            path="/favorites"
+            component={() => (
+              <Favorites
+                favorites={this.props.favorites}
+                deleteFavorite={this.props.deleteFavorite}
+              />
+            )}
+          />
           <Route
             exact
             path="/aboutus"
@@ -106,6 +167,8 @@ class Main extends Component {
       comments: state.comments,
       promotions: state.promotions,
       leaders: state.leaders,
+      favorites: state.favorites,
+      auth: state.auth,
     };
   }
 
@@ -121,8 +184,13 @@ class Main extends Component {
       fetchComments: () => dispatch(fetchComments()),
       fetchPromos: () => dispatch(fetchPromos()),
       fetchLeaders: () => dispatch(fetchLeaders()),
-      postFeedback:(values)=>dispatch(postFeedback(values))
+      postFeedback: (values) => dispatch(postFeedback(values)),
+      loginUser: (creds) => dispatch(loginUser(creds)),
+      logoutUser: () => dispatch(logoutUser()),
+      fetchFavorites: () => dispatch(fetchFavorites()),
+      postFavorite: (dishId) => dispatch(postFavorite(dishId)),
+      deleteFavorite: (dishId) => dispatch(deleteFavorite(dishId)),
     });
 
 
-export default connect(mapStateToProps,mapDispatchToProps)(Main);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
