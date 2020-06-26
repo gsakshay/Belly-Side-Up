@@ -23,21 +23,22 @@ class Main extends Component {
   }
   render() {
     const HomePage = () => {
+      const dish = this.props.dishes.dishes.filter((dish) => dish.featured)[0];
+      const promo = this.props.promotions.promotions.filter(
+              (promo) => promo.featured
+            )[0];
+      const leader = this.props.leaders.leaders.filter(
+        (leader) => leader.featured
+      )[0];
       return (
         <Home
-          dish={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
+          dish={dish}
           dishesLoading={this.props.dishes.isLoading}
           dishErrMess={this.props.dishes.errMess}
-          promotion={
-            this.props.promotions.promotions.filter(
-              (promo) => promo.featured
-            )[0]
-          }
+          promotion={promo}
           promoLoading={this.props.promotions.isLoading}
           promoErrMess={this.props.promotions.errMess}
-          leader={
-            this.props.leaders.leaders.filter((leader) => leader.featured)[0]
-          }
+          leader={leader}
           leadersLoading={this.props.leaders.isLoading}
           leadersErrMess={this.props.leaders.errMess}
         />

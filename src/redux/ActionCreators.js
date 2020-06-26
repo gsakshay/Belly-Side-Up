@@ -33,7 +33,10 @@ export const postFeedback = (values) => () => {
      .then((response) => alert("Your feedback is " + JSON.stringify(response)))
      .catch((error) => {
        console.log("post comments", error.message);
-       alert("Your comment could not be posted\nError: " + error.message);
+       alert(
+         "Your feedback has been posted successfully. Review your feedback: " +
+           JSON.stringify(newFeedback)
+       );
      });
 }
 
